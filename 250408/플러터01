@@ -1,32 +1,64 @@
+# 📱 Flutter 화면 전환과 위젯 생명주기
+
+## 🧩 위젯의 생명주기 (StatefulWidget 기준)
+
+| 메서드 이름          | 설명 |
+|----------------------|------|
+| `createState()`      | 위젯 생성 시 상태 객체를 생성합니다. |
+| `initState()`        | 상태 객체가 최초로 생성될 때 1회 호출. 초기화 작업에 사용됩니다. |
+| `didChangeDependencies()` | `initState()` 후 또는 `InheritedWidget`이 변경될 때 호출됩니다. |
+| `build()`            | 위젯을 화면에 그릴 때마다 호출됩니다. `setState()` 호출 시 다시 실행됨. |
+| `deactivate()`       | 위젯이 위젯 트리에서 제거될 때 호출됩니다. (완전 제거 아님) |
+| `dispose()`          | 위젯이 완전히 제거될 때 호출됩니다. 리소스 정리에 사용됨. |
+
+---
+
+## 📚 Navigator Stack 동작
+
+### `Navigator.push()`
+
+- 새로운 화면의 생명주기 메서드 호출 순서:
+  - `createState()` → `initState()` → `didChangeDependencies()` → `build()`
+- 기존 화면은 유지되며, `dispose()` 호출되지 않음.
+
+### `Navigator.pop()`
+
+- 현재 화면의 `dispose()` 호출됨.
+- 이전 화면이 다시 보이지만 `initState()`는 **호출되지 않음**.
+- 필요 시 `build()`는 다시 호출될 수 있음.
+
+---
+
+## 🧑‍💻 화면 전환 예제 코드
+
+### ✅ Firstpage.dart
+
+```dart
 import 'package:c_61/Person.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import 'package:c_61/SecondPage.dart';
 
-class Firstpage extends StatelessWidget{
+class Firstpage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       appBar: AppBar(
         title: Text("First"),
       ),
       body: ElevatedButton(
-          onPressed: () async {
-            final person = Person("홍길동", 20);
-            final result = await Navigator.pushNamed(
-              context,
-              '/second',
-                arguments : {
-                  "person" : person
-                }
-                );
-
-                print(result);
-                }
-          },
-          child: Text("다음 페이지로")
+        onPressed: () async {
+          final person = Person("홍길동", 20);
+          final result = await Navigator.pushNamed(
+            context,
+            '/second',
+            arguments: {
+              "person": person
+            },
+          );
+          print(result);
+        },
+        child: Text("다음 페이지로"),
       ),
     );
   }
