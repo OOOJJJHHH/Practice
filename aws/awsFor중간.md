@@ -284,14 +284,132 @@ SaaS
     ]
 }
 ```
+# 6장
+## EC2 인스턴스 생성시
+```java
+#!/bin/bash
+yum install httpd php -y
+aws s3 cp s3://sgu-202500-s3/index.php /var/www/html --region ap-northeast-2
+systemctl restart httpd
 
+```
+## AWS CLI
+### Amazon Web Services Command Line Interface
+AWS 리소스(S3, Ec2, IAM 등)를 터미널이나 명령 프롬프트로 제어할 수 있는 도구
+콘솔을 클릭하지 않고도 명령어만으로 S3버킷 생성, 파일 업로드, EC2 실행 같은 작업가능
 
+## AWS S3 CLI 주요 명령어
+`aws s3 ls : 버킷 목록 확인`
+`aws s3 ls s3://버킷이름/ : 버킷 안의 파일 목록`
+`aws s3 cp 로컬경로 s3://버킷이름/경로 : 파일 업로드`
+`aws s3 cp s3://버킷이름/경로 로컬경로 : 파일 다운로드`
+#### 디렉토리(폴더) 업로드/다운로드
+`다운로드 : aws s3 cp s3://my-bucket/folder ./local-folder --recursive`
+`업로드 : aws s3 cp ./local-folder s3://my-bucket/folder --recursive`
 
+#7장
+## Auto Scaling
+### 애플리케이션 또는 시스템의 성능을 높이기 위해 컴퓨팅 리소스를 확장하거나 축소하는 것
+### 요청이 많아질 때 처리할 수 있도록 서버를 키우는 것
 
+## Scale-Up 서버 한 대의 성능을 높이는 방식
+- cpu의 성능을 4배로 하는 대신 가격은 64배
+### 장점
+- 단순하고 설정이 쉬움
+###
+- 물리적인 한계 존재 (더 이상 업그레이드 불가)
+- 재시작 필요성 있음
+- 하나의 서버에만 의존 -> 장애 발생 시 위험
 
+## Scale-Out 서버를 여러 대로 늘려서 처리 성능을 확장하는 방식
+### 장점
+- 무중단 확장 가능
+### 단점
+- 복잡한 아키텍쳐, Lodad Balancer(ELB) 등의 구성 필요
 
+## Auto Scaling
+### 트래픽 상황에 맞춰 서버 수를 자동으로 늘리거나 줄여주는 AWS 서비스
+- 트래픽 증가 시 자동으로 인스턴스 증가
+- 사용량 감소시 자동으로 인스턴스 축소
+- 리소스 비용 절감 + 고가용성 유지
 
+## Auto Scaling 구성요소
+- Launch Template
+- Auto Scaling Group (ASG)
+- Scaling Policy (스케일링 정책)
+- CloudWatch 알람
 
+## Launch Template
+- 새 인스턴스를 생성할 때 필요한 설정을 담고 있는 설계도
+- 어떤 AMI(이미지)로 만들기
+- 인스턴스 타입(t3.micro 등)
+- 키 페어, 보안 그룹
+- UserData 스크립트 (초기 셋팅 자동화)
+
+## ASG
+- 인스턴스를 묶어서 관리하는 단위
+- 최소/최대/원하는(Desired) 인스턴스 수 설정
+- 실제 인스턴스 수를 계속 모니터링하고 자동 조절
+- Availability Zone 간 분산 가능
+
+## Scaling Policy
+- 언제, 어떻게 서버 수를 조절할지에 대한 규칙
+- Target Tracking : 평균 CPU 60% 유지처럼 목표 설정
+- Step Scaling : CPU 70~80% -> +1대, 80% 이상 _> +2대
+- Scheduled Scaling : 특정 시간에 확장(ex) 매일 오루 6시)
+
+## CloudWatch
+- 지표를 감시하다가 스케일링 정책을 실행하는 역할
+- CPU 사용률, 네트워크 트래픽, 메모리 등 모니터링
+- 조건 충족 시 Scaling Policy 트리거
+- 실시간 알람 + 로그 기록 가능
+
+## 사용자 데이터 추가 -> 시작 템플릿 생성
+```dart
+#!/bin/bash
+yum update -y
+amazon-linux-extras install -y epel
+yum install -y httpd stress-ng
+systemctl enable httpd
+systemctl start httpd
+echo "Hello from Auto Scaling Instance" > /var/www/html/index.html
+```
+## Auto Scaling Group(ASG)의 설정값
+- 원하는 용량 : 현재 운영하고 싶은 인스턴스 수 
+- 최소 용량 : 줄어들 수 있는 하한선
+- 최대 용량 : 늘어날 수 있는 상한선
+
+# 7장
+## ELB : AWS에서 제공하는 트래픽 분산 서비스
+- ElB는 들어오는 어플리케이션 트래픽을 Amazon 인스턴스, 컨테이너, IP 주소, 람다 함수와 같은 여러 대상에 자동 분산 시킴
+- ELB는 단일 가용영역, 여러 가용 영역에서 다양한 어플리케이션 부하를 처리가능
+- ELB에서 제공하는 3가지 로드밸런서는 모두 어플리케이션의 내결합성에 필요한 고가용성, 자동 확장/축소, 강력한 보안을 갖추고 있음
+
+## ELB 특징
+- 다수의 서비스에 트래픽을 분산 시켜주는 서비스
+`Health Check : 직접 트래픽을 방생시켜 Instance가 살아있는지 체크`
+- Autoscaling과 연동 가능
+- 여러 가용영역에 분산 가능
+- 지속적으로 IP주소가 바뀌면 IP 고정 불가능 : 항상 도메인 기반으로 사용
+#### 총 3가지 종류
+`Application Load Balancer` : 똑똑함
+- 트래픽을 모니터링하여 라우팅 가능
+- image.test.com -> 이미지 서버로, web.test.com -> 웹 서버로 트래픽 분산
+`Network Load Balancer` : 빠름
+- TCP 기반 빠른 트래픽 분산
+- Elastic IP 할당 가능
+`Classic Load Balancer` : 옛날
+
+## ALB - Target Group
+### 타겟 그룹 : ALB가 트래픽을 분산시킬 대상을 논리적으로 묶어놓은 그룹
+타겟 그룹 기준으로 요청 분배
+EC2 인스턴스, IP 주소, Lambda 함수, ELB 타켓 그룹 가능
+역할
+- ALB -> 라우팅 구칙에 따라 타겟 그룹으로 요청 전달
+- 타겟 그룹은 내부에서 등록된 인스턴스 중 헬스체크를 통과한 대상에게 트래픽 전달
+- 타켓 그룹별로 포트, 프로토콜, 헬스체크 설정 가능
+
+`프로비저닝 중 : 리소스를 할당하고 준비하고 있는 단계`
 
 
 
