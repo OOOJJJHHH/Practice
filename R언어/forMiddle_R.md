@@ -402,18 +402,20 @@ subset(df, age >= 30, select = c(name, score))
 df %>%
   filter(score >= 85)
 - 조건에 맞는 행 추출
+- 행의 값을 기준으로 필터링하고 싶을 때
 
 - select()
 
 df %>%
   select(name, score)
-- 특정 열만 선택
+- 특정 열(컬럼)을 선택하거나 제외할 때 사용
 
 - arrange()
 
 df %>%
   arrange(age)
 - 정렬 ( 오름차순 정렬 )
+- desc()를 사용할 시 내림차순 정렬
 
 - mutate()
 
@@ -433,6 +435,8 @@ df %>%
   )
 - 평균(mean), 최고점(max), 인원 수(n) 계산
 
+group_by(데이터, 기준이 될 컬럼)
+- 열(column) 기준, 행은 불가
 
 ```
 
