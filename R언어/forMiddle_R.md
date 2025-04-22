@@ -189,6 +189,7 @@ format(datetime, "%Y년 %m월 %d일 %H시 %M분")
 ```
 
 ### lubridate 패키지를 사용할 때 제공되는 날짜 관련 함수
+- Date, POSIXct, POSIXlt 클래스 객체에 대해 사용가능
 ```R
 year()
 - 연도 추출	2023
