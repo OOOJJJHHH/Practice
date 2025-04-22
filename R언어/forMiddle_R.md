@@ -296,17 +296,15 @@ df = data.frame(V = v1, VV = v2)
 df <- data.frame(rbind(v1, v2))
 - 가로로 값이 입력 됨
 
-colnames(df) <- c("X", "Y")
+colnames(df) = c("X", "Y")
 
-names(df) <- c("X", "Y")
-rownames(df) <- c("row1", "row2")
+names(df) = c("X", "Y")
+rownames(df) = c("row1", "row2")
 - names랑 colnames는 사실상 같은 기능
 
 apply(m, 1, sum)
-- 각 행의 합을 계산
+- 1일 경우 행 단위로 합을 계산, 2일 경우 열 단위로 합을 계산
 
-apply(m, 2, mean)
-- 각 열의 평균을 계산
 ```
 
 # LIST
@@ -337,10 +335,114 @@ my_list[[2]][2] = 10
 
 my_list[["c"]] = "New Value"
 - c의 값을 수정
+```
+
+# LIST 활용함수
+```R
+names(my_list)
+- 리스트 원소 이름 확인
+
+lapply(my_list2, sum)
+- 각 리스트 원소에 함수 적용
+- 결과는 리스트형식
+
+sapply(my_list2, sum)
+- 결과는 벡터형식
+
+================
+
+score = c(80, 90, 70, 85, 75)
+gender = c("M", "F", "M", "F", "M")
+
+tapply(score, gender, mean)
+- 성별로 평균 계산
+- 조건에 따른 score 결과가 나옴
+
+================
+
+x = c(1, 2, 3)
+y = c(10, 20, 30)
+
+mapply(sum, x, y)
+- 원소별로 덧셈 수행
+
+================
+
+values = c("A", "B", "C")
+times = c(1, 2, 3)
+
+mapply(rep, values, times)
+- A 1번, B 2번, C 3번  반복 수행
+
+```
+
+# subset() 함수
+```R
+df = data.frame(
+  name = c("Alice", "Bob", "Charlie", "Diana", "Evan"),
+  age = c(25, 30, 35, 28, 40),
+  gender = c("F", "M", "M", "F", "M"),
+  score = c(90, 85, 88, 92, 70)
+)
+
+subset(df, age >= 30)
+- 나이가 30 이상인 행 추출
+
+subset(df, age >= 30, select = c(name, score)) 
+- 나이 30 이상이고 name, score 컬럼만 선택
+
 
 
 ```
 
+# dplyr 패키지의 핵심 함수
+```R
+- filter()
+
+df %>%
+  filter(score >= 85)
+- 조건에 맞는 행 추출
+
+- select()
+
+df %>%
+  select(name, score)
+- 특정 열만 선택
+
+- arrange()
+
+df %>%
+  arrange(age)
+- 정렬 ( 오름차순 정렬 )
+
+- mutate()
+
+df %>%
+  mutate(pass = score >= 80)
+- score가 80이상이면 true, false라면 새로운 열에 ture, false 값을 저장한다
+-  새로운 열을 추가하거나 기존 열을 수정할 때 사용.
+
+- summarise()
+
+df %>%
+  group_by(gender) %>%
+  summarise(
+    avg = mean(score),
+    max = max(score),
+    count = n()
+  )
+- 평균(mean), 최고점(max), 인원 수(n) 계산
+
+
+```
+
+# %>%  파이프 연산자
+```R
+data %>% function1() %>% function2()
+- 함수1을 적용하고, 그 결과를 함수2로 넘겨줘서 계속 처리
+
+
+```
 
 
 
