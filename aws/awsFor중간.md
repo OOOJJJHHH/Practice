@@ -371,6 +371,7 @@ AWS 리소스(S3, Ec2, IAM 등)를 터미널이나 명령 프롬프트로 제어
 - 최소/최대/원하는(Desired) 인스턴스 수 설정
 - 실제 인스턴스 수를 계속 모니터링하고 자동 조절
 - Availability Zone 간 분산 가능
+`실시간 모니터링 방법 (Health Check, CloudWatch, 스케줄링 기반)`
 
 ## Scaling Policy
 - 언제, 어떻게 서버 수를 조절할지에 대한 규칙
@@ -383,6 +384,11 @@ AWS 리소스(S3, Ec2, IAM 등)를 터미널이나 명령 프롬프트로 제어
 - CPU 사용률, 네트워크 트래픽, 메모리 등 모니터링
 - 조건 충족 시 Scaling Policy 트리거
 - 실시간 알람 + 로그 기록 가능
+
+`CPUUtilization	CPU 사용률 (%)`
+`NetworkIn / NetworkOut	들어오는/나가는 네트워크 트래픽 (Bytes)`
+`DiskReadBytes / DiskWriteBytes	디스크 읽기/쓰기 바이트 수`
+`StatusCheckFailed	인스턴스 상태 검사 실패 여부`
 
 ## 사용자 데이터 추가 -> 시작 템플릿 생성
 ```dart
@@ -410,20 +416,20 @@ echo "Hello from Auto Scaling Instance" > /var/www/html/index.html
 `Health Check : 직접 트래픽을 방생시켜 Instance가 살아있는지 체크`
 - Autoscaling과 연동 가능
 - 여러 가용영역에 분산 가능
-- 지속적으로 IP주소가 바뀌면 IP 고정 불가능 : 항상 도메인 기반으로 사용
+- 지속적으로 IP주소가 바뀌면 IP 고정 불가능 : `항상 도메인 기반으로 사용`
 #### 총 3가지 종류
-`Application Load Balancer` : 똑똑함
+`Application Load Balancer` : 똑똑함  ( 정적임 ex) 웹 페이지, API )
 - 트래픽을 모니터링하여 라우팅 가능
 - image.test.com -> 이미지 서버로, web.test.com -> 웹 서버로 트래픽 분산
 - 특정 호스트네임이나 경로 기반으로 분기 처리
-`Network Load Balancer` : 빠름
+`Network Load Balancer` : 빠름 ( 실시간 ex) 게임, 실시간 통신 )
 - TCP 기반 빠른 트래픽 분산
 - Elastic IP 할당 가능
 - 예시 : 게임 서버, 실시간 통신, 고성능 백엔드
 `Classic Load Balancer` : 옛날
 
 ## ALB - Target Group
-### 타겟 그룹 : ALB가 트래픽을 분산시킬 대상을 논리적으로 묶어놓은 그룹
+### 타겟 그룹 : ALB가 트래픽을 분산시킬 대상을 논리적으로 묶어놓은 그룹  ||  ALB가 트래픽을 보낼 대상 서버 묶음
 타겟 그룹 기준으로 요청 분배
 EC2 인스턴스, IP 주소, Lambda 함수, ELB 타켓 그룹 가능
 역할
