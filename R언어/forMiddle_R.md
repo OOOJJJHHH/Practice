@@ -472,7 +472,8 @@ df %>%
 - score가 80이상이면 true, false라면 새로운 열에 ture, false 값을 저장한다
 -  새로운 열을 추가하거나 기존 열을 수정할 때 사용.
 
-- summarise()
+summarise()
+- 데이터를 그룹별로 요약하는 데 사용
 
 df %>%
   group_by(gender) %>%
@@ -485,6 +486,8 @@ df %>%
 
 group_by(데이터, 기준이 될 컬럼)
 - 열(column) 기준, 행은 불가
+
+
 
 ```
 
@@ -540,6 +543,41 @@ a %in% b
 
 toupper()
 - 영어 소문자를 대문자로 변환
+
+aggregate(Sales~Year, Fruits, sum)
+- aggregate(계산될 컬럼 ~ 기준될 컬럼, 데이터, 함수)
+- 년도별 Sales를 sum한다 Fruits 테이블에서
+```
+
+# 파일 관련
+```R
+list.files()
+- 숨김파일 제외하고 출력
+
+list.files(all.files = T)
+- 숨김 목록 포함해서 보여줌
+
+list.files(recursive = T)
+- 루트 디렉토리의 하위 파일들을 보여줌
+- 숨김 파일은 안보여줌
+
+scan("scan_2.txt", what = "")
+- scan() 내부에 요소가 있으면 파일을 읽는 함수
+- what="" 문자타입으로 읽음, what=0 숫자타입으로 읽음
+
+input = scan()
+- 위 형식과 같으면 숫자 입력을 받는 기능
+input = scan(what="")
+- 위 형식은 문자를 입력받는 기능
+
+readline() : 한줄 읽기
+
+readlines() : 여러 줄 읽기
+
+read.table()
+- 데이터를 읽어서 데이터 프레임에 저장
+- sep = ","	**쉼표(,)**를 구분자로 사용 – 즉, CSV 형식
+- header = T	**첫 번째 줄이 열 이름(헤더)**로 되어 있다고 지정
 ```
 
 
